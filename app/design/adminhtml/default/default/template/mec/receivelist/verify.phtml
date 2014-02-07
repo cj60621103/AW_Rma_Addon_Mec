@@ -1,0 +1,43 @@
+<div class="entry-edit">
+	<?php if ($this->getOrder()) : ?>
+		<div class="entry-edit-head">
+			<h4><?php echo $this->__('Items RMA Receive Verify Qty') ?></h4>
+		</div>
+		<div class="grid">
+			<table class="data border" cellpadding="0" cellspacing="0" id="verify_itmes">
+				<col />
+				<col width="1" />
+				<col width="1" />
+				<col width="1" />
+				<col width="1" />
+			    <thead>
+					<tr class="headings">
+						<th><?php echo $this->__('Product Name') ?></th>
+						<th><?php echo $this->__('SKU') ?></th>
+						<th><?php echo $this->__('Qty') ?></th>
+						<th><?php echo $this->__('Received Qty') ?></th>
+						<th><?php echo $this->__('Receive Qty') ?></th>
+					</tr>
+               </thead>
+				<tbody>
+					<?php $receiveItems = $this->getReceiveRequest()->getReceiveItems() ?>
+					<?php foreach (Mage::helper('rmaddon')->getReceiveItemsHtml($this->getReceiveRequest(), array('items' => array_keys($receiveItems))) as $item) : ?>
+						<?php echo $item ?>
+					<?php endforeach ?>
+				</tbody>
+			</table>
+		</div>
+		
+		<div class="entry-edit-head">
+			<h4><?php echo $this->__('Note') ?></h4>
+		</div>
+		<div class="fieldset">
+			<textarea rows="3" cols="20" name="note"></textarea>
+		</div>
+		
+		
+	<?php else: ?>
+		<?php echo $this->__('Couldn\'t load order') ?>
+	<?php endif; ?>
+
+</div>

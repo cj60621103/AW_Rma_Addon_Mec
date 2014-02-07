@@ -1,0 +1,65 @@
+<?php $_item = $this->getItem() ?>
+<?php $_helper = Mage::helper('rmaddon') ?>
+<?php $viewOnly = $_item->getData('mecreceive_view_only') ?>
+<?php $receive_id = $_item->getData('mec_receive_id'); ?>
+<tr class="border" id="order-item-row-<?php echo $_item->getId() ?>">
+    <td><h3 class="product-name"><?php echo $this->htmlEscape($_item->getName()) ?></h3>
+            <?php if ($this->getLinks()): ?>
+                <dl class="item-options">
+                    <dt><?php echo $this->getLinksTitle(); ?></dt>
+                    <?php foreach ($this->getLinks()->getPurchasedItems() as $_link): ?>
+                        <dd><?php echo $this->escapeHtml($_link->getLinkTitle()) ?> (<?php echo $_link->getNumberOfDownloadsUsed() . ' / ' . ($_link->getNumberOfDownloadsBought()?$_link->getNumberOfDownloadsBought():Mage::helper('downloadable')->__('U')) ?>)</dd>
+                    <?php endforeach; ?>
+                </dl>
+            <?php endif; ?>
+        <?php if ($_options = $this->getItemOptions()): ?>
+            <dl class="item-options">
+                <?php foreach ($_options as $_option) : ?>
+                    <dt><?php echo $this->htmlEscape($_option['label']) ?></dt>
+                    <?php if (!$this->getPrintStatus()): ?>
+                        <?php $_formatedOptionValue = $this->getFormatedOptionValue($_option) ?>
+                        <dd<?php if (isset($_formatedOptionValue['full_view'])): ?> class="truncated"<?php endif; ?>>
+                            <?php echo $_formatedOptionValue['value'] ?>
+                            <?php if (isset($_formatedOptionValue['full_view'])): ?>
+                                <div class="truncated_full_value">
+                                    <dl class="item-options">
+                                        <dt><?php echo $this->htmlEscape($_option['label']) ?></dt>
+                                        <dd><?php echo $_formatedOptionValue['full_view'] ?></dd>
+                                    </dl>
+                                </div>
+                            <?php endif; ?>
+                        </dd>
+                    <?php else: ?>
+                        <dd><?php echo $this->htmlEscape((isset($_option['print_value']) ? $_option['print_value'] : $_option['value'])) ?></dd>
+                    <?php endif; ?>
+                <?php endforeach; ?>
+            </dl>
+        <?php endif; ?>
+        <?php echo $this->htmlEscape($_item->getDescription()) ?>
+        <?php if ($this->helper('giftmessage/message')->getIsMessagesAvailable('order_item', $_item) && $_item->getGiftMessageId()): ?>
+            <a href="#" id="order-item-gift-message-link-<?php echo $_item->getId() ?>" class="gift-message-link" onclick="return giftMessageToogle('<?php echo $_item->getId() ?>')"><?php echo $this->__('Gift Message') ?></a>
+        <?php endif; ?>
+    </td>
+    <td><?php echo $this->htmlEscape(Mage::helper('core/string')->splitInjection($this->getSku())) ?></td>
+    <td class="a-right">
+        <span class="nobr">
+            <?php //if ($_helper->getItemMaxCount($_item) > 0): ?>
+			<label><?php echo $_helper->getItemCount($_item) ?></label>
+			<?php /* ?>
+				<input type="text" name="orderitems[<?php echo $_item->getId() ?>]" id="orderitem-count<?php echo $_item->getId() ?>" value="<?php echo $_helper->getItemCount($_item) ?>" class="awrma-items-count" />
+            <?php */ ?>
+            <?php // endif; ?>
+        </span>
+    </td>
+	<td class="a-right">
+		<span class="nobr">
+			<label><?php echo $_helper->getReceivedQty($_item->getId(), $receive_id) ?></label>
+		</span>
+	</td>
+	<td class="a-right">
+		<span class="nobr">
+			<input type="text" name="receiveqty[<?php echo $_item->getId() ?>]"  value="<?php echo $_helper->getItemCount($_item) ?>" class="awrma-items-count validate-number" />
+		</span>
+	</td>
+	
+</tr>

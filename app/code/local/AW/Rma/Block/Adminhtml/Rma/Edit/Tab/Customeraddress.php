@@ -99,6 +99,7 @@ class AW_Rma_Block_Adminhtml_Rma_Edit_Tab_Customeraddress extends Mage_Adminhtml
             'name' => 'printlabel[stateprovince]',
             'label' => $this->__('State/Province'),
             'required' => TRUE
+		 // ));
         ))->setRenderer(
                 $this->getLayout()->createBlock('adminhtml/customer_edit_renderer_region')
         );

@@ -33,7 +33,7 @@ class AW_Rma_Block_Adminhtml_Rma_Edit_Tab_Requestinformation extends Mage_Adminh
         $form = new Varien_Data_Form();
         $this->setForm($form);
         $formData = Mage::registry('awrmaformdatarma');
-
+		
         $details = $form->addFieldset('details_form', array(
             'legend' => $this->__('Request Details')
                 ));
@@ -91,13 +91,23 @@ class AW_Rma_Block_Adminhtml_Rma_Edit_Tab_Requestinformation extends Mage_Adminh
             'label' => $this->__('Package Opened'),
             'values' => Mage::getModel('awrma/source_packageopened')->toOptionArray()
         ));
-
-
-        $requestoptions->addField('status', 'select', array(
-            'name' => 'status',
-            'label' => $this->__('Set status to'),
-            'values' => $this->_getStatusOptions($formData)
-        ));
+		
+		$form_status = $formData->getStatus();
+		Mage::log($form_status);
+		if($form_status != "" && Mage::getModel('awrma/entitystatus')->load($form_status)->getResolve() == 1){
+			$formData->setStatus(Mage::getModel('awrma/entitystatus')->load($form_status)->getName());
+			$requestoptions->addField('status', 'label', array(
+				'name' => 'status',
+				'label' => $this->__('Status'),
+			));
+		}else{
+			$requestoptions->addField('status', 'select', array(
+				'name' => 'status',
+				'label' => $this->__('Set status to'),
+				'values' => $this->_getStatusOptions($formData)
+			));
+		}
+        
 
         $requestoptions->addField('request_type', 'select', array(
             'name' => 'request_type',

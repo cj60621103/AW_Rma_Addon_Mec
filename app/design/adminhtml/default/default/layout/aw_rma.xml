@@ -29,9 +29,12 @@
             <action method="addCss">
                 <stylesheet>aw_rma/css/rma.css</stylesheet>
             </action>
+			<action method="addJs"><script>jquery/jquery-1.8.3.min.js</script></action>
+			<action method="addJs"><script>jquery/jquery-noconflict.js</script></action>
             <action method="addJs">
                 <script>aw_rma.js</script>
             </action>
+			
         </reference>
     </awrma_admin_adminhtml_rma_edit>
     <awrma_admin_adminhtml_rma_new>
@@ -47,6 +50,11 @@
             <action method="addTab">
                 <name>Requests</name>
                 <block>awrma_requests</block>
+            </action>
+			<block type="awrma/adminhtml_sales_order_view_tabs_log" name="awrma_sales_log" />
+			<action method="addTab">
+                <name>Order Log</name>
+                <block>awrma_sales_log</block>
             </action>
         </reference>
     </adminhtml_sales_order_view>

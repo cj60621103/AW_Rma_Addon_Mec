@@ -28,18 +28,23 @@
 ?>
 <?php
 ?>
+<div class="entry-edit">
 <?php if ($this->getOrder()) : ?>
-    <h4><?php echo $this->__('Items RMA Requested for') ?></h4>
+	<div class="entry-edit-head">
+		<h4><?php echo $this->__('Items RMA Requested for') ?></h4>
+	</div>
     <div class="grid">
-        <table class="data border" cellpadding="0" cellspacing="0">
+        <table class="data border" cellpadding="0" cellspacing="0" id="rma_itmes">
             <col />
             <col width="1" />
             <col width="1" />
+			<col width="1" />
             <thead>
                 <tr class="headings">
                     <th><?php echo $this->__('Product Name') ?></th>
                     <th><?php echo $this->__('SKU') ?></th>
                     <th><?php echo $this->__('Qty') ?></th>
+                    <th><?php echo $this->__('Return to Stock') ?></th>
                 </tr>
             </thead>
             <tbody>
@@ -50,6 +55,97 @@
             </tbody>
         </table>
     </div>
+	<?php if($this->getRmaRequest()->getStatus() <= 3 || $this->getRmaRequest()->getStatus() >= 7): ?>
+	<div class="entry-edit-head">
+		<h4><?php echo $this->__('Credit Memon Settings') ?></h4>
+	</div>
+	<?php if($this->getRmaRequest()->getCreditMemoId() == null || $this->getRmaRequest()->getCreditMemoId() == ""){ ?>
+	<div id="credit_memon" class="fieldset ">
+		<div class="hor-scroll">
+			<table class="form-list">
+				<tbody>
+					<tr>
+						<td class="label"><label for="refund_shipping"><?php echo $this->__('Refund Shipping');?></label></td>
+						<td class="value"><input id="refund_shipping" class="input-text" type="text" value="<?php echo $this->getOrder()->getShippingAmount(); ?>" name="credit[shipping_amount]" /></td>
+					</tr>
+					<tr>
+						<td class="label"><label for="products_amount"><?php echo $this->__('Refund Products');?></label></td>
+						<td class="value"><input id="products_amount" class="input-text" type="text" value="" name="credit[products_amount]" /></td>
+					</tr>
+					<tr>
+						<td class="label"><label for="products_amount"><?php echo $this->__('Refund Products Tip Info');?></label></td>
+						<td class="value"><label style="color:red"><?php echo Mage::helper('rmaddon')->getRefundAmountTip($this->getRmaRequest()->getId(), $this->getOrder()->getId()); ?></label></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<button type="button" class="scalable scalable save" id="refund_button"><span><span><span><?php echo $this->__('Refund'); ?></span></span></span></button>
+	</div>
+	
+	<script type="text/javascript">
+		jQuery(document).ready(function($){
+			var rma_id = <?php echo $this->getRmaRequest()->getId(); ?>;
+			var order_id = <?php echo $this->getOrder()->getId(); ?>;
+			var _amount = <?php echo Mage::helper('rmaddon')->getRefundAmountTip($this->getRmaRequest()->getId(), $this->getOrder()->getId()); ?>;
+			$('#refund_button').click(function(){
+				$('#content p.form-buttons').remove();
+				var items_array = new Array();
+				var refund_shipping_amount = $('#refund_shipping').val();
+				var refund_products_amount = $('#products_amount').val();
+				var form_key = window.FORM_KEY;
+				var ajax_url = '<?php echo Mage::helper("adminhtml")->getUrl("rmaddon/adminhtml_ajax/ajaxRefund");?>';
+				$('.awrma-items-count').each(function(index){
+					items_array[$(this).attr('id').replace('orderitem-count', '' )] = $('.returnstock-items-count:eq(' + index + ')').val();
+					
+				});
+				
+				if(refund_products_amount <= _amount){
+					$.ajax({
+						url : ajax_url,
+						data : {
+							form_key : form_key,
+							items : items_array,
+							rma_id : rma_id,
+							order_id : order_id,
+							refund_shipping_amount : refund_shipping_amount,
+							refund_products_amount : refund_products_amount
+						},
+						type:'post',    
+						cache:false,    
+						dataType:'json',
+						success:function(data) {
+							if(data.txt != ""){
+								alert(data.txt);
+								window.location.reload();
+							}
+						},    
+						error:function(){
+							alert('Error, Please Check Params');
+						}
+					});
+				}else{
+					alert('<?php echo $this->__('Max Amount %s', Mage::helper('rmaddon')->getRefundAmountTip($this->getRmaRequest()->getId(), $this->getOrder()->getId())); ?>');
+				}
+			
+			})
+		});
+	</script>
+	<?php }else{ ?>
+		<div class="fieldset ">
+			<div class="hor-scroll">
+			<table class="form-list">
+				<tbody>
+					<tr>
+						<td class="label"><label><?php echo $this->__('Credit Memo');?></label></td>
+						<td class="value"><a target="_blank" href="<?php echo Mage::helper("adminhtml")->getUrl("adminhtml/sales_creditmemo/view/", array('creditmemo_id' => $this->getRmaRequest()->getCreditMemoId()));?>"><?php echo Mage::helper('rmaddon')->getCreditMemo($this->getRmaRequest()->getCreditMemoId()); ?></a></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		</div>
+	<?php } ?>
+	<?php endif; ?>
 <?php else : ?>
     <?php echo $this->__('Couldn\'t load order') ?>
 <?php endif ?>
+</div>

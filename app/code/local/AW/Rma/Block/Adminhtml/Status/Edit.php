@@ -37,7 +37,7 @@ class AW_Rma_Block_Adminhtml_Status_Edit extends Mage_Adminhtml_Block_Widget_For
         $this->_blockGroup = 'awrma';
 
         $this->_updateButton('save', 'onclick', "awrma_save();");
-        
+        $this->_removeButton('delete');
         $this->_addButton('saveandcontinueedit', array(
             'label' => $this->__('Save And Continue Edit'),
             'onclick' => 'awrmaSaveAndContinueEdit()',

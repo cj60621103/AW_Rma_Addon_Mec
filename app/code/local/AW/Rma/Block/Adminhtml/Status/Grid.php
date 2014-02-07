@@ -30,6 +30,7 @@
 class AW_Rma_Block_Adminhtml_Status_Grid extends Mage_Adminhtml_Block_Widget_Grid {
 
     public function __construct() {
+		
         parent::__construct();
         $this->setId('rma_statuses')
                 ->setDefaultSort('sort')
@@ -79,12 +80,12 @@ class AW_Rma_Block_Adminhtml_Status_Grid extends Mage_Adminhtml_Block_Widget_Gri
                     'url' => array('base' => '*/*/edit'),
                     'field' => 'id'
                 ),
-                array(
-                    'caption' => $this->__('Delete'),
-                    'url' => array('base' => '*/*/delete'),
-                    'field' => 'id',
-                    'confirm' => $this->__('Are you sure you want do this?')
-                )
+                // array(
+                    // 'caption' => $this->__('Delete'),
+                    // 'url' => array('base' => '*/*/delete'),
+                    // 'field' => 'id',
+                    // 'confirm' => $this->__('Are you sure you want do this?')
+                // )
             ),
             'filter' => false,
             'sortable' => false,

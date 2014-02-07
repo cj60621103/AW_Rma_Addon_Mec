@@ -127,12 +127,32 @@ class AW_Rma_Customer_RmaController extends Mage_Core_Controller_Front_Action {
         if (!$this->_validateFormKey()) {
             return $this->_redirect('awrma/customer_rma/new');
         }
-        $newRma = Mage::helper('awrma/request')->save($this->getRequest());
-        if ($this->hasErrors() || !$newRma) {
-            return $this->_redirect('awrma/customer_rma/new');
-        } else {
-            return $this->_redirect('awrma/customer_rma/view', array('id' => $newRma));
-        }
+		
+		$rma_review_status = Mage::helper('awrma')->getRmaReviewStatus();
+		// var_dump($this->getRequest()->getParam('order'));
+		// var_dump($rma_review_status);
+		// exit;
+		if($rma_review_status != null){
+			$order = Mage::getModel('sales/order')->loadByIncrementId($this->getRequest()->getParam('order'));
+			if($order->getStatus() != $rma_review_status){
+				
+				$newRma = Mage::helper('awrma/request')->save($this->getRequest());
+				$order->setOriginStatus($order->getStatus());
+				$order->setStatus($rma_review_status);
+				$order->save();
+				if ($this->hasErrors() || !$newRma) {
+					return $this->_redirect('awrma/customer_rma/new');
+				} else {
+					return $this->_redirect('awrma/customer_rma/view', array('id' => $newRma));
+				}
+			}else{
+				$this->_getSession()->addError($this->__('Your RMA Not Create. You already have an RMA request on processing for %s.', $order->getIncrementId()));
+				return $this->_redirect('awrma/customer_rma/new');
+			}		
+		}else{
+			return $this->_redirect('awrma/customer_rma/new');
+		}
+        
     }
 
     public function getitemsfororderAction() {
@@ -150,7 +170,11 @@ class AW_Rma_Customer_RmaController extends Mage_Core_Controller_Front_Action {
 
     protected function cancelAction() {
         $_rmaRequest = $this->_getRmaRequest();
+		
         if ($_rmaRequest) {
+			$order = Mage::getModel('sales/order')->loadByIncrementId($_rmaRequest->getOrderId());
+			$order->setStatus($order->getOriginStatus());
+			$order->save();
             $_rmaRequest->setStatus(Mage::helper('awrma/status')->getResolvedCanceledStatusId());
             $_rmaRequest->save();
             Mage::getModel('awrma/notify')->checkChanges($_rmaRequest, NULL, TRUE);

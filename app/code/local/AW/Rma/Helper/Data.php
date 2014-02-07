@@ -53,6 +53,7 @@ class AW_Rma_Helper_Data extends Mage_Core_Helper_Abstract {
     }
 
     public static function getItemsHtml($rmaRequest, $params = array()) {
+		// Mage::log($rmaRequest->getOrderItems());
         $params = array_merge($params, array('itemscount' => $rmaRequest->getOrderItems()));
         return self::getItemsForOrderHtml($rmaRequest->getData('order_id'), 2, '', $params);
     }
@@ -150,6 +151,7 @@ class AW_Rma_Helper_Data extends Mage_Core_Helper_Abstract {
      * @return array
      */
     public static function getItemsForOrderHtml($orderId, $guestMode, $data, $params = array()) {
+		// Mage::log($params);
         $result = array();
         $_order = Mage::getModel('sales/order')->loadByIncrementId($orderId);
 
@@ -274,7 +276,7 @@ class AW_Rma_Helper_Data extends Mage_Core_Helper_Abstract {
     }
 
     public static function isAllowedForOrder($order) {
-        if ($order->getState() == 'complete') {
+        if ($order->getState() == 'complete' || $order->getState() == 'processing') {
             $orderInvoices = $order->getInvoiceCollection();
             $lastInvoiceTime = 0;
             foreach ($orderInvoices as $invoice) {
@@ -307,5 +309,12 @@ class AW_Rma_Helper_Data extends Mage_Core_Helper_Abstract {
             return TRUE;
         return FALSE;
     }
+	
+	
+	public function getRmaReviewStatus()
+	{
+		return Mage::getStoreConfig('awrma/add_order_status/rma_review_status', $store = null);
+	}
+	
 
 }

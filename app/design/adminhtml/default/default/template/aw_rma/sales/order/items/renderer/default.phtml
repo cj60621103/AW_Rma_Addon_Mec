@@ -135,4 +135,8 @@
 
 
     </td>
+	<td>
+	 <input type="text" name="returnstock[<?php echo $_item->getId() ?>]" id="returnstock-count<?php echo $_item->getId() ?>" value="<?php echo $_helper->getItemCount($_item) ?>" class="returnstock-items-count" />
+	 <input type="hidden" id="returnstock-count<?php echo $_item->getId() ?>-maxcount" value="<?php echo max($_helper->getItemMaxCount($_item), $_helper->getItemCount($_item)); ?>" />
+	</td>
 </tr>

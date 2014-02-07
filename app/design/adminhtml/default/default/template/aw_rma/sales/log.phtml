@@ -1,0 +1,28 @@
+<?php $order = $this->getOrder();?>
+<?php $log_collection = $this->getLogCollection(); ?>
+
+<div class="entry-edit">
+	<fieldset>
+		<ul class="note-list">
+			<li><strong><?php echo Mage::getModel('core/date')->date($order->getCreateAt()); ?></strong>
+				<span class="separator">|</span>
+				<strong><?php echo $order->getCustomerEmail(); ?></strong>
+				<span class="separator">|</span>
+				<strong class="subdue"><?php echo Mage::helper('awrma')->__('Process This Order'); ?></strong>
+			</li>
+			
+			<?php foreach($this->getLogCollection() as $_log):?>
+				<li><strong><?php echo Mage::getModel('core/date')->date($_log->getCreateAt()); ?></strong>
+				<span class="separator">|</span>
+				<strong><?php echo $_log->getCreateFrom(); ?></strong>
+				<span class="separator">|</span>
+				<strong class="subdue"><?php echo $_log->getLogText(); ?></strong>
+				<?php if($_log->getComment() != ""): ?>
+				<span class="separator">|</span>
+				<strong><?php echo $_log->getComment(); ?></strong>
+				<?php endif; ?>
+				</li>
+			<?php endforeach; ?>
+		</ul>
+	</fieldset>
+</div>

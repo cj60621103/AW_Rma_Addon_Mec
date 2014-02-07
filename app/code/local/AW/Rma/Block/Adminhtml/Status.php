@@ -34,6 +34,7 @@ class AW_Rma_Block_Adminhtml_Status extends Mage_Adminhtml_Block_Widget_Grid_Con
         $this->_blockGroup = 'awrma';
         $this->_headerText = $this->__('Manage Statuses');
         parent::__construct();
+		$this->_removeButton('add');
     }
 
 }

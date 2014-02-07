@@ -60,7 +60,14 @@ class AW_Rma_Block_Adminhtml_Rma_Edit_Tabs extends Mage_Adminhtml_Block_Widget_T
             'label' => $this->__('Notes'),
             'content' => $this->getLayout()->createBlock('awrma/adminhtml_rma_edit_tab_notes')->toHtml()
         ));
+		
+		 $this->addTab('log', array(
+            'label' => $this->__('Log'),
+            'label' => $this->__('Log'),
+            'content' => $this->getLayout()->createBlock("awrma/adminhtml_rma_edit_tab_log")->toHtml()
+        ));
 
+		
         return parent::_beforeToHtml();
     }
 

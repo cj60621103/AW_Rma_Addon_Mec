@@ -41,6 +41,7 @@ class AW_Rma_Adminhtml_RmaController extends AW_Rma_Adminhtml_AbstractController
 
     protected function saveAction() {
         $listType = $this->_getSession()->getData('awrma-list-type');
+		
         if (!$this->_validateFormKey())
             return $this->_redirect('*/*/' . ($listType ? $listType : 'list'));
 
@@ -55,6 +56,9 @@ class AW_Rma_Adminhtml_RmaController extends AW_Rma_Adminhtml_AbstractController
         $_data = $rmaRequest->getData();
        
         $_data['status'] = $this->getRequest()->getParam('status');
+		
+		
+		
         $_data['request_type'] = $this->getRequest()->getParam('request_type');
         $_data['tracking_code'] = $this->getRequest()->getParam('tracking_code');
         $_data['admin_notes'] = $this->getRequest()->getParam('admin_notes');
@@ -88,8 +92,11 @@ class AW_Rma_Adminhtml_RmaController extends AW_Rma_Adminhtml_AbstractController
         if ($rmaRequest->getData('status') != $_data['status']
                 && $_data['status'] == Mage::helper('awrma/status')->getApprovedStatusId()
                 && !$rmaRequest->getApprovementCode())
-            $_data['approvement_code'] = Mage::helper('awrma/request')->getApprovementCode();
-
+				{
+					$_data['approvement_code'] = Mage::helper('awrma/request')->getApprovementCode();
+					
+				}
+            
         $printLabel = $this->getRequest()->getParam('printlabel');
         if (isset($printLabel['stateprovince']) && filter_var($printLabel['stateprovince'], FILTER_VALIDATE_INT)) {
             $printLabel['stateprovince_id'] = $printLabel['stateprovince'];
@@ -100,6 +107,27 @@ class AW_Rma_Adminhtml_RmaController extends AW_Rma_Adminhtml_AbstractController
         if (!$this->hasErrors()) {
             $rmaRequest->setData($_data);
             $rmaRequest->save();
+			
+			if($rmaRequest->getStatus() == 2 && Mage::helper('rmaddon')->createReceive($rmaRequest->getId())){
+				$receive_list_data = array(
+					'rma_id' => $rmaRequest->getId(),
+					'order_id' => $rmaRequest->getOrderId(),
+					'receive_items' => $rmaRequest->getOrderItems()
+				);
+				$receive_ob = Mage::getModel("rmaddon/receivelist")->addData($receive_list_data)->save();
+				
+				$log_data_array = array(
+					'rma_id' => $rmaRequest->getId(),
+					'receive_id'=> $receive_ob->getId(),
+					'log_text' => 'Create Receiver List',
+					'create_at' => time(),
+					'order_id' => $_order->getEntityId()
+				);
+				
+				Mage::helper('rmaddon')->addLog($log_data_array);
+				
+			}
+			
             $this->_getSession()->addSuccess(Mage::helper('awrma')->__('RMA successfully saved'));
 
             $_notified = FALSE;

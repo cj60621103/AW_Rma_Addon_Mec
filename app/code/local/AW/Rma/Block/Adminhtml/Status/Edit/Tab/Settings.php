@@ -46,12 +46,12 @@ class AW_Rma_Block_Adminhtml_Status_Edit_Tab_Settings extends Mage_Adminhtml_Blo
             'required' => TRUE
         ));
 
-        $_fieldset->addField('resolve', 'select', array(
-            'name' => 'resolve',
-            'label' => $this->__('Resolve RMA after obtaining status'),
-            'required' => TRUE,
-            'values' => Mage::getModel('adminhtml/system_config_source_yesno')->toOptionArray()
-        ));
+        // $_fieldset->addField('resolve', 'select', array(
+            // 'name' => 'resolve',
+            // 'label' => $this->__('Resolve RMA after obtaining status'),
+            // 'required' => TRUE,
+            // 'values' => Mage::getModel('adminhtml/system_config_source_yesno')->toOptionArray()
+        // ));
 
         if (!$data || !in_array($data->getId(), Mage::helper('awrma/status')->getUneditedStatus())) {
             if (!Mage::app()->isSingleStoreMode()) {

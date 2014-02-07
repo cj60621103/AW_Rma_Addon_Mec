@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<config>
+  <modules>
+    <Mec_Rmaddon>
+      <active>true</active>
+      <codePool>local</codePool>
+      <version>0.1.0</version>
+    </Mec_Rmaddon>
+  </modules>
+</config>
