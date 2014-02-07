@@ -1,0 +1,14 @@
+id1:
+ status_name: "Pending Approval"
+id2:
+ status_name: "Approved"
+id3:
+ status_name: "Package sent"
+id4:
+ status_name: "Resolved (canceled)"
+id5:
+ status_name: "Resolved (refunded)"
+id6:
+ status_name: "Resolved (replaced)"
+id7:
+ status_name: null

@@ -1,0 +1,14 @@
+id1:
+ count_after_customer_filter: 1
+ count_after_active_filter: 2
+ count_after_order_filter: 1
+ count_after_external_link_filter: 2
+ count_after_status_filter: 1
+ status_name: "Pending Approval"
+id2:
+ count_after_customer_filter: 0
+ count_after_active_filter: 0
+ count_after_order_filter: 0
+ count_after_external_link_filter: 0
+ count_after_status_filter: 0
+ status_name: null

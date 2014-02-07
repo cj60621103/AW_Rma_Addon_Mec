@@ -1,0 +1,14 @@
+tables:
+  awrma/entity_types:
+    -
+      id: 1
+      name: Replacement
+      store: 0
+      sort: 1
+      enabled: 1
+    -
+      id: 2
+      name: Refund
+      store: 0
+      sort: 2
+      enabled: 1

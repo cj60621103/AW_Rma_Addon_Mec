@@ -1,0 +1,56 @@
+<?php
+/**
+* aheadWorks Co.
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the EULA
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://ecommerce.aheadworks.com/AW-LICENSE-COMMUNITY.txt
+ *
+ * =================================================================
+ *                 MAGENTO EDITION USAGE NOTICE
+ * =================================================================
+ * This package designed for Magento COMMUNITY edition
+ * aheadWorks does not guarantee correct work of this extension
+ * on any other Magento edition except Magento COMMUNITY edition.
+ * aheadWorks does not provide extension support in case of
+ * incorrect edition usage.
+ * =================================================================
+ *
+ * @category   AW
+ * @package    AW_Rma
+ * @version    1.3.1
+ * @copyright  Copyright (c) 2010-2012 aheadWorks Co. (http://www.aheadworks.com)
+ * @license    http://ecommerce.aheadworks.com/AW-LICENSE-COMMUNITY.txt
+ */
+?>
+<?php
+?>
+
+<?php if ($this->getComments()->getSize()) : ?>
+    <ul class="awrma-comments-list">
+        <?php foreach ($this->getComments() as $_comment) : ?>
+            <li>
+                <strong>
+                    <?php echo $this->formatDate($_comment->getCreatedAt()) ?> <?php echo $this->formatTime($_comment->getCreatedAt()) ?>
+                    <span class="separator">|</span>
+                    <?php if ($_comment->getOwner() == AW_Rma_Model_Source_Owner::ADMIN) : ?>
+                        <?php echo Mage::getModel('awrma/source_owner')->getOptionLabel($_comment->getOwner()) ?>
+                    <?php else : ?>
+                        <?php echo $this->getRmaRequest()->getCustomerName() ?>
+                    <?php endif ?>
+                </strong>
+                <div><?php echo $_comment->getText() ?></div>
+                <?php if ($_comment->getAttachments()) : ?>
+                    <div>
+                        <a href="<?php echo $this->getUrl('awrma_admin/adminhtml_rma/download', array('cid' => $_comment->getId())) ?>"><?php echo $_comment->getAttachments() ?></a> (<?php echo Mage::helper('awrma/files')->getTextSize($_comment->getAttachments()) ?>)
+                    </div>
+                <?php endif ?>
+            </li>
+        <?php endforeach ?>
+    </ul>
+<?php else : ?>
+    <?php echo $this->__('No comments yet') ?>
+<?php endif ?>

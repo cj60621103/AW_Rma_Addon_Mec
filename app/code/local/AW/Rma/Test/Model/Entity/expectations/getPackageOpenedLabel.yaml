@@ -1,0 +1,8 @@
+id1:
+ package_opened_label: "No"
+id2:
+ package_opened_label: "Yes"
+id3:
+ package_opened_label: false
+id4:
+ package_opened_label: null

@@ -1,0 +1,50 @@
+tables:
+  awrma/entity:
+    -
+      id: 1
+      order_id: 100000001
+      order_items: 'a:1:{i:1;i:1;}'
+      request_type: 0
+      package_opened: 0
+      created_at: 2011-09-29 09:22:18
+      status: 1
+      approvement_code:
+      tracking_code:
+      customer_id: 2
+      customer_name: AW AW
+      customer_email: korovkin@aheadworks.com
+      external_link: 439593B54E8438CA3BF93
+      admin_notes:
+      print_label: 'a:12:{s:9:"firstname";s:2:"AW";s:8:"lastname";s:2:"AW";s:7:"company";s:0:"";s:9:"telephone";s:2:"AW";s:3:"fax";s:0:"";s:13:"streetaddress";a:2:{i:0;s:2:"AW";i:1;s:0:"";}s:4:"city";s:2:"AW";s:10:"country_id";s:2:"US";s:13:"stateprovince";s:7:"Alabama";s:8:"postcode";s:2:"AW";s:14:"additionalinfo";s:0:"";s:16:"stateprovince_id";s:1:"1";}'
+    -
+      id: 6000
+      order_id: 100000001
+      order_items: 'a:1:{i:1;i:1;}'
+      request_type: 0
+      package_opened: 0
+      created_at: 2011-09-29 09:22:18
+      status: 1
+      approvement_code:
+      tracking_code:
+      customer_id: 2
+      customer_name: AW AW
+      customer_email: korovkin@aheadworks.com
+      external_link: 439593B54E8438CA3BF93
+      admin_notes:
+      print_label: 'a:12:{s:9:"firstname";s:2:"AW";s:8:"lastname";s:2:"AW";s:7:"company";s:0:"";s:9:"telephone";s:2:"AW";s:3:"fax";s:0:"";s:13:"streetaddress";a:2:{i:0;s:2:"AW";i:1;s:0:"";}s:4:"city";s:2:"AW";s:10:"country_id";s:2:"US";s:13:"stateprovince";s:7:"Alabama";s:8:"postcode";s:2:"AW";s:14:"additionalinfo";s:0:"";s:16:"stateprovince_id";s:1:"1";}'
+    -
+      id: 3
+      order_id: 100000001
+      order_items: 'a:1:{i:1;i:1;}'
+      request_type: 0
+      package_opened: 0
+      created_at: 2011-09-29 09:22:18
+      status: 1
+      approvement_code:
+      tracking_code:
+      customer_id: 2
+      customer_name: AW AW
+      customer_email: korovkin@aheadworks.com
+      external_link: 439593B54E8438CA3BF93
+      admin_notes:
+      print_label: 'a:12:{s:9:"firstname";s:2:"AW";s:8:"lastname";s:2:"AW";s:7:"company";s:0:"";s:9:"telephone";s:2:"AW";s:3:"fax";s:0:"";s:13:"streetaddress";a:2:{i:0;s:2:"AW";i:1;s:0:"";}s:4:"city";s:2:"AW";s:10:"country_id";s:2:"US";s:13:"stateprovince";s:7:"Alabama";s:8:"postcode";s:2:"AW";s:14:"additionalinfo";s:0:"";s:16:"stateprovince_id";s:1:"1";}'

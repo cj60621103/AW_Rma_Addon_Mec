@@ -1,0 +1,181 @@
+<?php
+/**
+* aheadWorks Co.
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the EULA
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://ecommerce.aheadworks.com/AW-LICENSE-COMMUNITY.txt
+ *
+ * =================================================================
+ *                 MAGENTO EDITION USAGE NOTICE
+ * =================================================================
+ * This package designed for Magento COMMUNITY edition
+ * aheadWorks does not guarantee correct work of this extension
+ * on any other Magento edition except Magento COMMUNITY edition.
+ * aheadWorks does not provide extension support in case of
+ * incorrect edition usage.
+ * =================================================================
+ *
+ * @category   AW
+ * @package    AW_Rma
+ * @version    1.3.1
+ * @copyright  Copyright (c) 2010-2012 aheadWorks Co. (http://www.aheadworks.com)
+ * @license    http://ecommerce.aheadworks.com/AW-LICENSE-COMMUNITY.txt
+ */
+?>
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE_AFL.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Magento to newer
+ * versions in the future. If you wish to customize Magento for your
+ * needs please refer to http://www.magentocommerce.com for more information.
+ *
+ * @category    design
+ * @package     base_default
+ * @copyright   Copyright (c) 2011 Magento Inc. (http://www.magentocommerce.com)
+ * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ */
+?>
+<?php $parentItem = $this->getItem() ?>
+<?php $_helper = Mage::helper('awrma') ?>
+<?php $items = array_merge(array($parentItem), $parentItem->getChildrenItems()); ?>
+<?php $_count = count ($items) ?>
+<?php $_index = 0 ?>
+<?php $_action = $this->getRequest()->getActionName(); ?>
+
+<?php $_prevOptionId = '' ?>
+<?php if($this->getItemOptions() || $parentItem->getDescription() || $this->helper('giftmessage/message')->getIsMessagesAvailable('order_item', $parentItem) && $parentItem->getGiftMessageId()): ?>
+    <?php $_showlastRow = true ?>
+<?php else: ?>
+    <?php $_showlastRow = false ?>
+<?php endif; ?>
+<?php foreach ($items as $_item): ?>
+<?php if ($_item->getData('awrma_qty') || ($_action == 'edit' && !$this->getRequest()->getParam('id'))) : ?>
+<?php $viewOnly = $_item->getData('awrma_view_only') ?>
+
+
+<?php if ($_item->getParentItem()): ?>
+    <?php $attributes = $this->getSelectionAttributes($_item) ?>
+    <?php if ($_prevOptionId != $attributes['option_id']): ?>
+    <tr<?php if ($_item->getLastRow()) echo 'class="last"'; ?>>
+        <td><div class="option-label"><?php echo $attributes['option_label'] ?></div></td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+    </tr>
+    <?php $_prevOptionId = $attributes['option_id'] ?>
+    <?php endif; ?>
+<?php endif; ?>
+<tr<?php echo (++$_index==$_count && !$_showlastRow)?' class="border"':'' ?> id="order-item-row-<?php echo $_item->getId() ?>">
+
+    <?php if (!$_item->getParentItem()) : ?>
+
+        <td><h3 class="product-name"><?php echo $this->htmlEscape($_item->getName()) ?></h3></td>
+        <td>&nbsp;</td>
+        <td>
+            <span class="nobr">
+                <?php //if ($_helper->getItemMaxCount($_item) > 0): ?>
+                <input type="hidden" name="orderitems[<?php echo $_item->getId() ?>]" id="orderitem-count<?php echo $_item->getId() ?>" value="<?php echo $_helper->getItemCount($_item) ?>" class="awrma-items-count" />
+                <input type="hidden" id="orderitem-count<?php echo $_item->getId() ?>-maxcount" value="<?php echo max($_helper->getItemMaxCount($_item), $_helper->getItemCount($_item)); ?>" />
+                <?php // endif; ?>
+            </span>
+        </td>    
+    <?php else: ?>
+    <td><div class="option-value"><?php echo $this->htmlEscape($_item->getName()) ?></div></td>
+    
+    <td><?php echo $this->htmlEscape(Mage::helper('core/string')->splitInjection($_item->getSku())) ?></td>
+    <td class="a-right">
+        <span class="nobr">
+            <?php //if ($_helper->getItemMaxCount($_item) > 0): ?>
+            <input type="text" name="orderitems[<?php echo $_item->getId() ?>]" id="orderitem-count<?php echo $_item->getId() ?>" value="<?php echo $_helper->getItemCount($_item) ?>" class="awrma-items-count" />
+            <input type="hidden" id="orderitem-count<?php echo $_item->getId() ?>-maxcount" value="<?php echo max($_helper->getItemMaxCount($_item), $_helper->getItemCount($_item)); ?>" />
+            <?php // endif; ?>
+        </span>
+
+        <?php
+        $_rma = Mage::registry('awrmaformdatarma');
+
+        $_currentRmaId = null;
+        if ($_rma && $_rma->getTextId()) {
+            $_currentRmaId = $_rma->getId();
+        }
+
+        $allItems = $_helper->getAllRmaItems($_item->getData('order_id'));
+
+        $_anotherRma = array();
+        if (isset($allItems[$_item->getId()]) && is_array($allItems[$_item->getId()])) {
+            foreach ($allItems[$_item->getId()] as $item) {
+                $_rma = $item['rma'];
+                if ($_rma->getId() !== $_currentRmaId) {
+                    $_anotherRma[] = $_rma;
+                }
+            }
+        }
+        ?>
+        <?php if ($_anotherRma): ?>
+            <p><?php echo $this->__('Another RMA for this product:'); ?> </p>
+            <ul>
+                <?php foreach ($_anotherRma as $_rma) : ?>
+                    <li><a href="<?php echo $_rma->getAdminUrl(); ?>"><?php echo $_rma->getTextId(); ?></a></li>
+                <?php endforeach; ?>
+            </ul>
+
+        <?php endif; ?>
+    </td>
+    <?php endif; ?>
+
+</tr>
+<?php endif; ?>
+<?php endforeach; ?>
+
+<?php if ($_showlastRow): ?>
+<tr class="border">
+    <td>
+        <?php if($_options = $this->getItemOptions()): ?>
+        <dl class="item-options">
+        <?php foreach ($_options as $_option) : ?>
+            <dt><?php echo $this->htmlEscape($_option['label']) ?></dt>
+            <?php if (!$this->getPrintStatus()): ?>
+                <?php $_formatedOptionValue = $this->getFormatedOptionValue($_option) ?>
+                <dd<?php if (isset($_formatedOptionValue['full_view'])): ?> class="truncated"<?php endif; ?>>
+                    <?php echo $_formatedOptionValue['value'] ?>
+                    <?php if (isset($_formatedOptionValue['full_view'])): ?>
+                    <div class="truncated_full_value">
+                        <dl class="item-options">
+                            <dt><?php echo $this->htmlEscape($_option['label']) ?></dt>
+                            <dd><?php echo $_formatedOptionValue['full_view'] ?></dd>
+                        </dl>
+                    </div>
+                    <?php endif; ?>
+                </dd>
+            <?php else: ?>
+                <dd><?php echo $this->htmlEscape( (isset($_option['print_value']) ? $_option['print_value'] : $_option['value']) ) ?></dd>
+            <?php endif; ?>
+        <?php endforeach; ?>
+        </dl>
+        <?php endif; ?>
+        <?php echo $this->htmlEscape($_item->getDescription()) ?>
+        <?php if($this->helper('giftmessage/message')->getIsMessagesAvailable('order_item', $parentItem) && $parentItem->getGiftMessageId()): ?>
+            <a href="#" id="order-item-gift-message-link-<?php echo $parentItem->getId() ?>" class="gift-message-link" onclick="return giftMessageToogle('<?php echo $parentItem->getId() ?>')"><?php echo Mage::helper('sales')->__('Gift Message') ?></a>
+        <?php endif; ?>
+    </td>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+</tr>
+<?php endif; ?>
+

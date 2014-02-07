@@ -1,0 +1,14 @@
+id1:
+ is_active: true
+id2:
+ is_active: true
+id3:
+ is_active: true
+id4:
+ is_active: false
+id5:
+ is_active: false
+id6:
+ is_active: false
+id7:
+ is_active: true

@@ -1,0 +1,113 @@
+tables:
+  awrma/entity_status:
+    -
+      id: 1
+      name: Pending Approval
+      store: 0
+      sort: 1
+      resolve: 0
+      to_customer: '<p>RMA {{var request.getTextId()}} successfully created.</p>'
+      to_admin: |
+        <p>A new RMA {{var request.getTextId()}} is initiated by {{var request.getCustomerName()}} <{{var request.getCustomerEmail()}}> for order <a href=\"{{var request.getNotifyOrderAdminLink()}}\">#{{var request.getOrderId()}}</a>.</p>
+        <p>Date: {{var request.getCreatedAt()}}<br />
+        Request Type:  {{var request.getRequestTypeName()}}<br />
+        Package Opened: {{var request.getPackageOpenedLabel()}}</p>
+
+        <p>Items<br />
+        {{layout handle=\"awrma_email_request_item\" rma_request=$request}}</p>
+      to_chatbox: >
+        Your RMA has been placed and waiting for
+        approval.
+      removed: 0
+    -
+      id: 2
+      name: Approved
+      store: 0
+      sort: 2
+      resolve: 0
+      to_customer: |
+        <p>Your RMA {{var request.getTextId()}} has been approved.</p>
+        {{depend request.getNotifyPrintlabelAllowed()}}<p>You can print a \"Return Shipping Authorization\" label with return address and other information by pressing link above. A \"Return Shipping Authorization\" label must be enclosed inside your package; you may want to keep a copy of \"Return Shipping Authorization\" label for your records.</p>
+        {{/depend}}
+        <p>Please send your package to:</p>
+
+        <p>{{var request.getNotifyRmaAddress()}}</p>
+        {{depend request.getConfirmShippingIsRequired()}}<p>and press \"Confirm Sending\" button after.</p>{{/depend}}
+      to_admin:
+      to_chatbox: |
+        Your RMA has been approved.
+        {{depend request.getNotifyPrintlabelAllowed()}}You can print a \"Return Shipping Authorization\" label with return address and other information by pressing link above. A \"Return Shipping Authorization\" label must be enclosed inside your package; you may want to keep a copy of \"Return Shipping Authorization\" label for your records.
+        {{/depend}}
+        Please send your package to:
+
+        {{var request.getNotifyRmaAddress()}}
+
+        {{depend request.getConfirmShippingIsRequired()}}and press \"Confirm Sending\" button after.{{/depend}}
+      removed: 0
+    -
+      id: 3
+      name: Package sent
+      store: 0
+      sort: 3
+      resolve: 0
+      to_customer:
+      to_admin: |
+        {{depend request.getNotifyStatusChanged()}}
+        <p>RMA {{var request.getTextId()}} status changed to {{var request.getStatusName()}}</p>
+        {{/depend}}
+        <h3>RMA details</h3>
+        <p>ID: {{var request.getTextId()}}<br />
+        Order ID: #<a href=\"{{var request.getNotifyOrderAdminLink()}}\">#{{var request.getOrderId()}}</a>.<br />
+
+        Customer: {{var request.getCustomerName()}} <{{var request.getCustomerEmail()}}><br />
+        Date: {{var request.getCreatedAt()}}
+        Request Type: {{var request.getRequestTypeName()}}<br />
+        Package Opened: {{var request.getPackageOpenedLabel()}}</p>
+        <p>Items<br />
+        {{layout handle=\"awrma_email_request_item\" rma_request=$request}}</p>
+      to_chatbox:
+      removed: 0
+    -
+      id: 4
+      name: Resolved (canceled)
+      store: 0
+      sort: 4
+      resolve: 1
+      to_customer: 'Your RMA {{var request.getTextId()}} has been successfully resolved with status \"{{var request.getStatusName()}}\".'
+      to_admin: |
+        RMA {{var request.getTextId()}} has been canceled by customer
+
+        <h3>RMA details</h3>
+
+
+        <p>ID: {{var request.getTextId()}}<br />
+        Order ID: #<a href=\"{{var request.getNotifyOrderAdminLink()}}\">#{{var request.getOrderId()}}</a>.<br />
+        Customer: {{var request.getCustomerName()}} <{{var request.getCustomerEmail()}}><br />
+        Date: {{var request.getCreatedAt()}}
+        Request Type: {{var request.getRequestTypeName()}}<br />
+        Package Opened: {{var request.getPackageOpenedLabel()}}</p>
+
+        <p>Items<br />
+        {{layout handle=\"awrma_email_request_item\" rma_request=$request}}</p>
+      to_chatbox: 'RMA {{var request.getTextId()}} has been successfully resolved with status \"{{var request.getStatusName()}}\".'
+      removed: 0
+    -
+      id: 5
+      name: Resolved (refunded)
+      store: 0
+      sort: 5
+      resolve: 1
+      to_customer: 'Your RMA {{var request.getTextId()}} has been successfully resolved with status \"{{var request.getStatusName()}}\".'
+      to_admin:
+      to_chatbox: 'RMA {{var request.getTextId()}} has been successfully resolved with status \"{{var request.getStatusName()}}\".'
+      removed: 0
+    -
+      id: 6
+      name: Resolved (replaced)
+      store: 0
+      sort: 6
+      resolve: 1
+      to_customer: 'Your RMA {{var request.getTextId()}} has been successfully resolved with status \"{{var request.getStatusName()}}\".'
+      to_admin:
+      to_chatbox: 'RMA {{var request.getTextId()}} has been successfully resolved with status \"{{var request.getStatusName()}}\".'
+      removed: 0
