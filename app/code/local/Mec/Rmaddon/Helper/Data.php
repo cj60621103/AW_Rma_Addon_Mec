@@ -156,7 +156,60 @@ class Mec_Rmaddon_Helper_Data extends Mage_Core_Helper_Abstract
 		$order_increment_id = $rma->getOrderId();
 		return Mage::getModel('sales/order')->loadByIncrementId($order_increment_id)->getEntityId();
 		
+	}
 	
+	
+	public function isExamine($rma_id, $main_order_id)
+	{
+		$flag = false;
+		$size = Mage::getModel('rmaddon/financial')->getCollection()
+				->addFieldToFilter('rma_id', array('eq' => $rma_id))
+				->addFieldToFilter('main_order_id', array('eq' => $main_order_id))
+				->getSize();
+				
+		if($size > 0){
+			$flag = true;
+		}
+		
+		return $flag;
+	
+	
+	}
+	
+	
+	public function getRmaRefundInitAmount($rma_id, $main_order_id)
+	{
+		$amount_array = array();
+		$collection = Mage::getModel('rmaddon/financial')->getCollection()
+					->addFieldToFilter('rma_id', array('eq' => $rma_id))
+					->addFieldToFilter('main_order_id', array('eq' => $main_order_id));
+					
+		$size = $collection->getSize();
+		if($size > 0){
+			$_amount = $collection->getFirstItem();
+			$amount_array['shipping_amount'] = $_amount->getShippingAmount();
+			$amount_array['products_amount'] = $_amount->getAmount();
+			
+		}else{
+			$order = Mage::getModel('sales/order')->load($main_order_id);
+			$amount_array['shipping_amount'] = $order->getShippingAmount();
+			$amount_array['products_amount'] = 0;
+		}
+		
+		return $amount_array;
+	}
+	
+	
+	public function getFinancialIdByRmaIdAndOrderId($rma_id, $order_id)
+	{
+		$collection = Mage::getModel('rmaddon/financial')->getCollection()
+					->addFieldToFilter('rma_id', array('eq' => $rma_id))
+					->addFieldToFilter('main_order_id', array('eq' => $order_id));
+		if($collection->getSize() > 0){
+			return $collection->getFirstItem()->getId();
+		}else{	
+			return null;
+		}
 	}
 	
 	

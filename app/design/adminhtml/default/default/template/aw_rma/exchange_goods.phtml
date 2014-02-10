@@ -1,0 +1,155 @@
+<?php $rma_request = $this->getRmaRequest(); ?>
+<?php $order = $this->getOrder(); ?>
+<?php $items_array = $this->getItemsCollection(); ?>
+<?php if($rma_request->getRequestType() == 1): ?>
+
+<div class="entry-edit">
+	<?php if($this->alreadyReplace()){ ?>
+	<div class="entry-edit-head"><h4><?php echo $this->__('Customer Info'); ?></h4></div>
+	<div class="fieldset">
+		<div class="hor-scroll">
+			<table  class="form-list">
+				<tbody>
+					<tr>
+						<td class="label"><label><?php echo $this->__('Customer Email'); ?></label></td>
+						<td class="value"><label><?php echo $order->getCustomerEmail(); ?></label></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+	
+	<div class="entry-edit-head"><h4><?php echo $this->__('Goods Info'); ?></h4></div>
+	<div class="grid">
+		<table id="rma_exchange_info" class="data border" cellspacing="0" cellpadding="0">
+			<colgroup>
+				<col>
+				<col width="1">
+				<col width="1">
+				<col width="1">
+            </colgroup>
+			<thead>
+				<tr class="headings">
+					<th><?php echo $this->__('Product Name'); ?></th>
+					<th><?php echo $this->__('Sku'); ?></th>
+					<th><?php echo $this->__('Replace'); ?></th>
+					<th><?php echo $this->__('Replace Qty'); ?></th>
+				</tr>
+			</thead>
+			<tbody>
+				<?php foreach($items_array as $PID => $replace_info): ?>
+					<?php $_product = Mage::getModel('catalog/product')->load($PID); ?>
+					<tr class="border">
+						<td><h3><?php echo $_product->getName(); ?></h3></td>
+						<td><?php echo $_product->getSku(); ?></td>
+						<td><input type="checkbox" name="replace[]" value="<?php echo $replace_info['quote_item_id']; ?>" /></td>
+						<td><input type="text" value="<?php echo $replace_info['replace']; ?>" class="replace_qty"/></td>
+					</tr>
+				<?php endforeach; ?>
+			</tbody>
+		</table>
+	</div>
+	
+	<div class="entry-edit-head"><h4><?php echo $this->__('Replace Action'); ?></h4></div>
+	<div class="fieldset">
+		<div class="hor-scroll">
+			<table  class="form-list">
+				<tbody>
+					<tr>
+						<td class="label"><label><?php echo $this->__('Create Products Amount'); ?></label></td>
+						<td class="value"><input type="text" value="0" id="create_order_amount" /> </td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<button id="create_order" class="scalable scalable save" type="button"><span><span><span><?php echo $this->__('Create Replace'); ?></span></span></span></button>
+	</div>
+
+<script type="text/javascript">
+jQuery(document).ready(function($){
+	var order_id = <?php echo $order->getId(); ?>;
+	var rma_id = <?php echo $rma_request->getId(); ?>;
+	var can_ajax = false;
+	$('#create_order').addClass('disabled');
+	
+	$('#rma_exchange_info input[type=checkbox]').click(function(){
+		var checked = 0;
+		var unchecked = 0;
+		$(this).each(function(){
+			if($(this).attr('checked') == 'checked'){
+				checked++;
+			}else{
+				unchecked++;
+			}
+		});
+		if(checked == 0){
+			$('#create_order').addClass('disabled');
+			can_ajax = false;
+		}else if(checked > 0){
+			can_ajax = true;
+			$('#create_order').removeClass('disabled');	
+		}
+		console.log(unchecked);
+		console.log(checked);
+		
+		
+	});
+	
+	$('#create_order').click(function(){
+		var replace_info = Array();
+		$('#rma_exchange_info input[type=checkbox]').each(function(){
+			if($(this).attr('checked') == 'checked'){
+				replace_info[$(this).val()] = $(this).parents('tr').find('td:last input.replace_qty').val();
+			}	
+		});
+		console.log(replace_info);
+		
+		if(can_ajax){
+			$.ajax({
+				url : '<?php echo Mage::helper("adminhtml")->getUrl("rmaddon/adminhtml_ajax/ajaxRepalceCreate");?>',
+				data : {
+					form_key : window.FORM_KEY,
+					replace_info : replace_info,
+					rma_id : rma_id,
+					order_id : order_id,
+					order_amount : $('#create_order_amount').val()
+				},
+				type:'post',    
+				cache:false,    
+				dataType:'json',
+				success:function(data) {
+					if(data.status == false){
+						alert(data.error);
+					}else{
+						alert(data.txt);
+						window.location.reload();
+					}
+				},    
+				error:function(){
+					alert('Error, Please Check Params');
+				}
+			});
+		
+		}
+	});
+	
+})
+</script>
+<?php }else{ ?>
+	<?php $replace_order = $this->getReplaceOrder(); ?>
+	<div class="entry-edit-head"><h4><?php echo $this->__('Repalce Order Info'); ?></h4></div>
+	<div class="fieldset">
+		<div class="hor-scroll">
+			<table  class="form-list">
+				<tbody>
+					<tr>
+						<td class="label"><label><?php echo $this->__('Order'); ?></label></td>
+						<td class="value"><a target="_blank" href="<?php echo Mage::helper("adminhtml")->getUrl("adminhtml/sales_order/view/", array('order_id' => $replace_order->getId()));?>"><?php echo $replace_order->getIncrementId(); ?></a></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+<?php } ?>
+</div>
+<?php endif; ?>

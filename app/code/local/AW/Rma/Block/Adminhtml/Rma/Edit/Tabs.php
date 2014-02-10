@@ -48,6 +48,12 @@ class AW_Rma_Block_Adminhtml_Rma_Edit_Tabs extends Mage_Adminhtml_Block_Widget_T
             'title' => $this->__('RMA Items'),
             'content' => $this->getLayout()->createBlock('awrma/adminhtml_rma_edit_tab_rmaitems')->toHtml()
         ));
+		
+		$this->addTab('exchange_goods', array(
+            'label' => $this->__('Exchange Goods'),
+            'title' => $this->__('Exchange Goods'),
+            'content' => $this->getLayout()->createBlock('awrma/adminhtml_rma_edit_tab_exchange')->toHtml()
+        ));
 
         $this->addTab('customer_address', array(
             'label' => $this->__('Customer Address'),

@@ -58,4 +58,11 @@
             </action>
         </reference>
     </adminhtml_sales_order_view>
+	
+	<awrma_admin_adminhtml_rma_replaceorder>
+        <update handle="formkey"/>
+		<reference name="content">
+			<block type="awrma/adminhtml_replace_order_grid" name="replace_order.grid" output="toHtml"></block>
+		</reference>
+    </awrma_admin_adminhtml_rma_replaceorder>
 </layout>

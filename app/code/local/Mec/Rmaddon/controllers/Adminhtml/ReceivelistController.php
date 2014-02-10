@@ -173,7 +173,7 @@ class Mec_Rmaddon_Adminhtml_ReceivelistController extends Mage_Adminhtml_Control
 								'receive_id'=> $model->getId(),
 								'log_text' => 'The Receive List Has Change Status To ' . $status_option[3],
 								'comment' => $note,
-								'create_at' => time()
+								'create_at' => time(),
 								'order_id' => $order_id
 							);
 				
@@ -181,9 +181,55 @@ class Mec_Rmaddon_Adminhtml_ReceivelistController extends Mage_Adminhtml_Control
 							
 							
 							if($rma->getStatus() != 9 && $rma->getCreditMemoId() == ""){
-								$rma->setStatus(9)->save();
+								if($rma->getRequestType() == 2){
+									$rma->setStatus(9)->save();
+									Mage::getModel('awrma/notify')->notifyNew($rma, null);
+								}else{
+									$rma->setStatus(8)->save();
+									Mage::getModel('awrma/notify')->notifyNew($rma, null);
+								}
+								
+								if($rma->getRequestType() == 1){
+									//找到退货的原有订单
+									$_order = Mage::getModel('sales/order')->loadByIncrementId($rma->getOrderId());
+									//找到换货单
+									$replace_order = Mage::getModel('sales/order')->getCollection()
+													->addFieldToFilter('rma_id', array('eq' => $rma->getId()))
+													->addFieldToFilter('main_order', array('eq' => $_order->getId()));
+									if($replace_order->getSize() > 0){
+										$replace_state = $replace_order->getFirstItem()->getState();
+										if($replace_state == 'complete'){
+											//设置rma 换货完成
+											$rma->setStatus(6)->save();
+											Mage::getModel('awrma/notify')->notifyNew($rma, null);
+											//归还原有订单状态
+											$_order->setStatus($_order->getOriginStatus())->save();
+										}
+									}
+								}
+								
 							}else{
-								$rma->setStatus(5)->save();
+								if($rma->getRequestType() == 2){
+									$rma->setStatus(5)->save();
+									Mage::getModel('awrma/notify')->notifyNew($rma, null);
+								}else if($rma->getRequestType() == 1){
+									//找到退货的原有订单
+									$_order = Mage::getModel('sales/order')->loadByIncrementId($rma->getOrderId());
+									//找到换货单
+									$replace_order = Mage::getModel('sales/order')->getCollection()
+													->addFieldToFilter('rma_id', array('eq' => $rma->getId()))
+													->addFieldToFilter('main_order', array('eq' => $_order->getId()));
+									if($replace_order->getSize() > 0){
+										$replace_state = $replace_order->getFirstItem()->getState();
+										if($replace_state == 'complete'){ 
+											//设置rma 换货完成
+											$rma->setStatus(6)->save();
+											Mage::getModel('awrma/notify')->notifyNew($rma, null);
+											//归还原有订单状态
+											$_order->setStatus($_order->getOriginStatus())->save();
+										}
+									}
+								}
 							}
 						}
 						

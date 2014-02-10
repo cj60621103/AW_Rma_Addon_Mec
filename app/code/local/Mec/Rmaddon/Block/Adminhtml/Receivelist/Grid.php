@@ -8,7 +8,7 @@ class Mec_Rmaddon_Block_Adminhtml_Receivelist_Grid extends Mage_Adminhtml_Block_
 				parent::__construct();
 				$this->setId("receivelistGrid");
 				$this->setDefaultSort("id");
-				$this->setDefaultDir("ASC");
+				$this->setDefaultDir("desc");
 				$this->setSaveParametersInSession(true);
 		}
 

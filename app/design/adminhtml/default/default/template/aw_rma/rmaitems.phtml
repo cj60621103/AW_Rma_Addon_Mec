@@ -56,21 +56,95 @@
         </table>
     </div>
 	<?php if($this->getRmaRequest()->getStatus() <= 3 || $this->getRmaRequest()->getStatus() >= 7): ?>
+			<?php if($this->getRmaRequest()->getCreditMemoId() == null || $this->getRmaRequest()->getCreditMemoId() == "" ): ?>
+			<!-- 客服审批金额，并不生成 credit memon -->
+			<div class="entry-edit-head">
+				<h4><?php echo $this->__('Accraditation Credit Memon Settings') ?></h4>
+			</div>
+			<?php $accraditation_amount_array = Mage::helper('rmaddon')->getRmaRefundInitAmount($this->getRmaRequest()->getId(), $this->getOrder()->getId()); ?>
+			<div class="fieldset" id="accraditation">
+				<div class="hor-scroll">
+					<table class="form-list">
+						<tr>
+							<td class="label"><label for="accraditation_refund_shipping"><?php echo $this->__('Refund Shipping');?></label></td>
+							<td class="value"><input id="accraditation_refund_shipping" class="input-text" type="text" value="<?php echo $accraditation_amount_array['shipping_amount']; ?>" /></td>
+						</tr>
+						<tr>
+							<td class="label"><label for="accraditation_products_amount"><?php echo $this->__('Refund Products');?></label></td>
+							<td class="value"><input id="accraditation_products_amount" class="input-text" type="text" value="<?php echo $accraditation_amount_array['products_amount']?>"  /></td>
+						</tr>
+						<tr>
+							<td class="label"><label for="products_amount"><?php echo $this->__('Refund Products Tip Info');?></label></td>
+							<td class="value"><label style="color:red"><?php echo Mage::helper('rmaddon')->getRefundAmountTip($this->getRmaRequest()->getId(), $this->getOrder()->getId()); ?></label></td>
+						</tr>
+					</table>
+				</div>
+				<button type="button" class="scalable scalable save" id="accraditation_refund_button"><span><span><span><?php echo $this->__('Accraditation'); ?></span></span></span></button>
+			</div>
+			<script type="text/javascript">
+			  jQuery(document).ready(function($){
+				$('#accraditation_refund_button').click(function(){
+					var max_amount = <?php echo Mage::helper('rmaddon')->getRefundAmountTip($this->getRmaRequest()->getId(), $this->getOrder()->getId()); ?>;
+					var refund_accraditation_products_amount = $('#accraditation_products_amount').val();
+					if(refund_accraditation_products_amount <= max_amount){
+						$.ajax({
+							url : '<?php echo Mage::helper("adminhtml")->getUrl("rmaddon/adminhtml_ajax/ajaxAccraditationRefund"); ?>',
+							data : {
+								form_key : window.FORM_KEY,
+								rma_id : <?php echo $this->getRmaRequest()->getId(); ?>,
+								order_id : <?php echo $this->getOrder()->getId(); ?>,
+								refund_accraditation_shipping_amount : $('#accraditation_refund_shipping').val(),
+								refund_accraditation_products_amount : refund_accraditation_products_amount
+							},
+							type:'post',    
+							cache:false,    
+							dataType:'json',
+							success:function(data) {
+								if(data.status){
+									window.location.reload();
+								}
+							},    
+							error:function(){
+								alert('Error, Please Check Params');
+							}
+						});
+					}else{
+						alert('<?php echo $this->__('Max Amount %s', Mage::helper('rmaddon')->getRefundAmountTip($this->getRmaRequest()->getId(), $this->getOrder()->getId())); ?>');
+					}
+				})
+			  });
+			</script>
+			<?php else: ?>
+				<div class="fieldset ">
+					<div class="hor-scroll">
+						<table class="form-list">
+							<tbody>
+								<tr>
+									<td class="label"><label><?php echo $this->__('Credit Memo');?></label></td>
+									<td class="value"><?php echo Mage::helper('rmaddon')->getCreditMemo($this->getRmaRequest()->getCreditMemoId()); ?></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			<?php endif; ?>
 	<div class="entry-edit-head">
 		<h4><?php echo $this->__('Credit Memon Settings') ?></h4>
 	</div>
-	<?php if($this->getRmaRequest()->getCreditMemoId() == null || $this->getRmaRequest()->getCreditMemoId() == ""){ ?>
+	<?php if($this->getRmaRequest()->getCreditMemoId() == null || $this->getRmaRequest()->getCreditMemoId() == "" ){ ?>
+	<!-- 财务审批并生成 credit memon -->
+	<?php $refund_amount_array = Mage::helper('rmaddon')->getRmaRefundInitAmount($this->getRmaRequest()->getId(), $this->getOrder()->getId()); ?>
 	<div id="credit_memon" class="fieldset ">
 		<div class="hor-scroll">
 			<table class="form-list">
 				<tbody>
 					<tr>
 						<td class="label"><label for="refund_shipping"><?php echo $this->__('Refund Shipping');?></label></td>
-						<td class="value"><input id="refund_shipping" class="input-text" type="text" value="<?php echo $this->getOrder()->getShippingAmount(); ?>" name="credit[shipping_amount]" /></td>
+						<td class="value"><input id="refund_shipping" class="input-text" type="text" value="<?php echo $refund_amount_array['shipping_amount']; ?>" name="credit[shipping_amount]" /></td>
 					</tr>
 					<tr>
 						<td class="label"><label for="products_amount"><?php echo $this->__('Refund Products');?></label></td>
-						<td class="value"><input id="products_amount" class="input-text" type="text" value="" name="credit[products_amount]" /></td>
+						<td class="value"><input id="products_amount" class="input-text" type="text" value="<?php echo $refund_amount_array['products_amount']; ?>" name="credit[products_amount]" /></td>
 					</tr>
 					<tr>
 						<td class="label"><label for="products_amount"><?php echo $this->__('Refund Products Tip Info');?></label></td>
@@ -79,9 +153,14 @@
 				</tbody>
 			</table>
 		</div>
-		<button type="button" class="scalable scalable save" id="refund_button"><span><span><span><?php echo $this->__('Refund'); ?></span></span></span></button>
+		<!--  客服不审批，财务不允许直接退款 -->
+		<?php if(Mage::helper('rmaddon')->isExamine($this->getRmaRequest()->getId(), $this->getOrder()->getId())): ?>
+			<button type="button" class="scalable scalable save" id="refund_button"><span><span><span><?php echo $this->__('Refund'); ?></span></span></span></button>
+		<?php else: ?>
+			<div class="tip"><span style="color:red"><?php echo $this->__('Customer service is not for approval'); ?></span></div>
+		<?php endif; ?>
 	</div>
-	
+	<?php if(Mage::helper('rmaddon')->isExamine($this->getRmaRequest()->getId(), $this->getOrder()->getId())): ?>
 	<script type="text/javascript">
 		jQuery(document).ready(function($){
 			var rma_id = <?php echo $this->getRmaRequest()->getId(); ?>;
@@ -130,6 +209,10 @@
 			})
 		});
 	</script>
+	<?php endif; ?>
+	
+	
+	
 	<?php }else{ ?>
 		<div class="fieldset ">
 			<div class="hor-scroll">

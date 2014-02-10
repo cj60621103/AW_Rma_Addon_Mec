@@ -259,6 +259,17 @@ class AW_Rma_Adminhtml_RmaController extends AW_Rma_Adminhtml_AbstractController
         $this->_initAction()->renderLayout();
     }
 
+	
+	protected function replaceorderAction()
+	{
+		$this->_setTitle('Sales')
+                ->_setTitle('RMA')
+                ->_setTitle('Replace Orders');
+        // $this->_getSession()->setData('awrma-list-type', 'list');
+        $this->_initAction()->renderLayout();
+	
+	}
+	
     protected function downloadAction() {
         if ($this->getRequest()->getParam('cid')) {
             $_comment = Mage::getModel('awrma/entitycomments')->load($this->getRequest()->getParam('cid'));
@@ -394,6 +405,11 @@ class AW_Rma_Adminhtml_RmaController extends AW_Rma_Adminhtml_AbstractController
     protected function ordergridAction() {
         $this->loadLayout();
         $this->getResponse()->setBody($this->getLayout()->createBlock('awrma/adminhtml_sales_order_view_tabs_requests_grid')->toHtml());
+    }
+	
+	protected function replacegridAction() {
+        $this->loadLayout();
+        $this->getResponse()->setBody($this->getLayout()->createBlock('awrma/adminhtml_replace_order_grid')->toHtml());
     }
 
 }

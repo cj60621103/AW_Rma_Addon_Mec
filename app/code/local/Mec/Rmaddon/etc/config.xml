@@ -30,6 +30,10 @@
 			  <rmalog>
 				<table>mec_rma_log</table>
 			  </rmalog>
+			  
+			  <financial>
+				<table>mec_temporary_financial</table>
+			  </financial>
         </entities>
 	  </rmaddon_mysql4>
 	</models>
@@ -73,7 +77,59 @@
 		</connection>
 	  </rmaddon_read>
 	  
+	   <salesattribute1391828950_setup>
+		<setup>
+		  <module>Mec_Rmaddon</module>
+		  <class>Mage_Sales_Model_Mysql4_Setup</class>
+		</setup>
+		<connection>
+		  <use>core_setup</use>
+		</connection>
+	  </salesattribute1391828950_setup>
+	  <salesattribute1391828950_write>
+		<connection>
+		  <use>core_write</use>
+		</connection>
+	  </salesattribute1391828950_write>
+	  <salesattribute1391828950_read>
+		<connection>
+		  <use>core_read</use>
+		</connection>
+	  </salesattribute1391828950_read>
+	  
+	  <rmaddon_setup0210>
+		<setup>
+		  <module>Mec_Rmaddon</module>
+		</setup>
+		<connection>
+		  <use>core_setup</use>
+		</connection>
+	  </rmaddon_setup0210>
+	  <rmaddon_setup0210_write>
+		<connection>
+		  <use>core_write</use>
+		</connection>
+	  </rmaddon_setup0210_write>
+	  <rmaddon_setup0210_read>
+		<connection>
+		  <use>core_read</use>
+		</connection>
+	  </rmaddon_setup0210_read>
+	  
 	</resources>
+	
+	<events>
+		<sales_order_shipment_save_after>
+			<observers>
+				<sales_order_shipment_save_after_handle>
+					<type>singleton</type>
+					<class>rmaddon/observer</class>
+					<method>verifyRma</method>
+				</sales_order_shipment_save_after_handle>
+			</observers>
+		</sales_order_shipment_save_after>
+	</events>
+	
   </global>
   <admin>
 	<routers>

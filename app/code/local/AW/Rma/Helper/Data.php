@@ -276,7 +276,7 @@ class AW_Rma_Helper_Data extends Mage_Core_Helper_Abstract {
     }
 
     public static function isAllowedForOrder($order) {
-        if ($order->getState() == 'complete' || $order->getState() == 'processing') {
+        if ($order->getState() == 'complete' &&  $order->getRmaId() == "" && $order->getMainOrder() == "" || $order->getState() == 'processing' &&  $order->getRmaId() == "" && $order->getMainOrder() == "" ) {
             $orderInvoices = $order->getInvoiceCollection();
             $lastInvoiceTime = 0;
             foreach ($orderInvoices as $invoice) {

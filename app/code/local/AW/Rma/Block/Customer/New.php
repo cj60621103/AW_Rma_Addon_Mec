@@ -96,6 +96,8 @@ class AW_Rma_Block_Customer_New extends Mage_Core_Block_Template {
             $this->_customerOrders = Mage::getResourceModel('sales/order_collection')
                     ->addFieldToFilter('customer_id', $this->_getSession()->getCustomer()->getId())
                     ->addFieldToFilter('state', array('in' => array('complete', 'processing')))
+					->addFieldToFilter('rma_id', array('null' => 'this_value_doesnt_matter'))
+					->addFieldToFilter('main_order', array('null' => 'this_value_doesnt_matter'))
                     ->setOrder('created_at', 'desc');
             $this->_customerOrders->getSelect()
                     ->where('updated_at > DATE_SUB(NOW(), INTERVAL ? DAY)', Mage::helper('awrma/config')->getDaysAfter());

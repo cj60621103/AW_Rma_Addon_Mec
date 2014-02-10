@@ -99,6 +99,11 @@
                                 <sort_order>20</sort_order>
                                 <action>awrma_admin/adminhtml_rma/listpending</action>
                             </listpending>
+							<replace_order module="awrma">
+								<title>Replace Orders</title>
+                                <sort_order>25</sort_order>
+                                <action>awrma_admin/adminhtml_rma/replaceorder</action>
+							</replace_order>
                             <status module="awrma">
                                 <title>Manage Statuses</title>
                                 <sort_order>30</sort_order>
