@@ -264,6 +264,12 @@
             </awrma_read>
         </resources>
         <blocks>
+			<sales>
+				<rewrite>
+					<order_history>AW_Rma_Block_Sales_Order_History</order_history>
+					<order_recent>AW_Rma_Block_Sales_Order_Recent</order_recent>
+				</rewrite>
+			</sales>
             <awrma>
                 <class>AW_Rma_Block</class>
             </awrma>
