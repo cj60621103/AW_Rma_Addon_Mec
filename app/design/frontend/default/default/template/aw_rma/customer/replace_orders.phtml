@@ -1,0 +1,46 @@
+<div class="replace_orders">
+	<div class="page-title"><h1><?php echo $this->__('My Replace Order'); ?></h1></div>
+    <?php echo $this->getMessagesBlock()->getGroupedHtml() ?>
+	
+	<?php if ($this->getCollection()->getSize()) : ?>
+		  <?php echo $this->getChildHtml('pager'); ?>
+		  <table class="data-table" id="my-orders-table">
+			<col width="1" />
+			<col width="1" />
+			<col />
+			<col width="1" />
+			<col width="1" />
+			<col width="1" />
+			<thead>
+				<tr>
+					<th><?php echo $this->__('Order #') ?></th>
+					<th><?php echo $this->__('Date') ?></th>
+					<th><?php echo $this->__('Ship To') ?></th>
+					<th><span class="nobr"><?php echo $this->__('Order Total') ?></span></th>
+					<th><span class="nobr"><?php echo $this->__('Order Status') ?></span></th>
+					<th>&nbsp;</th>
+				</tr>
+			</thead>
+			<tbody>
+				<?php $_odd = ''; ?>
+				<?php foreach ($this->getCollection() as $_order): ?>
+				<tr>
+					<td><?php echo $_order->getRealOrderId() ?></td>
+					<td><span class="nobr"><?php echo $this->formatDate($_order->getCreatedAtStoreDate()) ?></span></td>
+					<td><?php echo $_order->getShippingAddress() ? $this->escapeHtml($_order->getShippingAddress()->getName()) : '&nbsp;' ?></td>
+					<td><?php echo $_order->formatPrice($_order->getGrandTotal()) ?></td>
+					<td><em><?php echo $_order->getStatusLabel() ?></em></td>
+					<td class="a-center">
+						<span class="nobr">
+							<a href="<?php echo $this->getViewReplaceUrl($_order) ?>"><?php echo $this->__('View Order') ?></a>	
+						</span>
+					</td>
+				</tr>
+				<?php endforeach; ?>
+			</tbody>
+		</table>
+		<?php echo $this->getChildHtml('pager'); ?>
+	<?php else: ?>
+		<p><?php echo $this->__('You have no replace orders'); ?></p>
+	<?php endif; ?>
+</div>
